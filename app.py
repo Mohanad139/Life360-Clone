@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from datetime import datetime
-from database import init_db, insert_location, gets_location,get_all_locations,delete_location
+from database import init_db, insert_location, gets_location,get_all_locations,delete_location,update_location
 
 init_db() # Initilize the database when the app start
 
@@ -16,8 +16,6 @@ def home():
 @app.route('/update_location/<user_id>/<lat>/<lon>')
 def accept_user(user_id,lat,lon):     
     # Get the value from the user and store it inside dictionary locations
-    now = datetime.now()
-    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")   
     if user_id == '':
         return jsonify({"error": "User ID must contain a character"}), 400
 
@@ -31,8 +29,11 @@ def accept_user(user_id,lat,lon):
     if not(lon <= 180 and lon >= -180):
         return jsonify({"error": "Longitude must be in range of -180,180"}), 400
                 
-    
-    insert_location(user_id,lat,lon,timestamp)
+    result = gets_location(user_id)
+    if result is not None:
+        update_location(user_id,lat,lon)
+    else:
+        insert_location(user_id,lat,lon)
     return jsonify({"message":"Successfully accepted the user"})
     
 

@@ -1,23 +1,28 @@
 import sqlite3
+from datetime import datetime
+
 
 def init_db():
     conn = sqlite3.connect("locations.db")
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS locations(
-            User_id TEXT PRIMARY KEY,
-            Latitude REAL,
-            Longitude REAL,
-            Timestamp TEXT)
+            user_id TEXT PRIMARY KEY,
+            latitude REAL,
+            longitude REAL,
+            timestamp TEXT)
                    """)
     
     conn.commit()
     conn.close()
 
-def insert_location(user_id, lat, lon, timestamp):
+def insert_location(user_id, lat, lon):
     conn = sqlite3.connect("locations.db")
     cursor = conn.cursor()
 
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")   
+    
     cursor.execute("""
         INSERT INTO locations VALUES (?,?,?,?)       
     """,(user_id,lat,lon,timestamp))
@@ -65,3 +70,22 @@ def delete_location(user_id):
     
     conn.commit()
     conn.close()
+
+def update_location(user_id,lat,lon):
+    #Connect to The database
+    conn = sqlite3.connect("locations.db")
+    cursor = conn.cursor()
+    #Get The timming
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")   
+    #Update the table of the user
+    cursor.execute("""
+        UPDATE locations
+        SET latitude = ?, longitude = ?, timestamp = ?
+        WHERE user_id = ?           
+    """,(lat,lon,timestamp,user_id,))
+
+    conn.commit()
+    conn.close()
+
+
