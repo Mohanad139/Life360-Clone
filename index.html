@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Life360 Clone</title>
+</head>
+<body>
+    <h1>Life360 Clone</h1>
+    
+    <!-- Map will go here -->
+    <div id="map"></div>
+    
+    <!-- Form will go here -->
+    <div>
+        <input type="text" placeholder="Name Ex: Mohanad ">
+        <button onclick="shareLocation()">Share My Location </button>
+    </div>
+    
+    <!-- Users list will go here -->
+    <div id="users"></div>
+
+    <script>
+        function shareLocation() {
+            const userId = document.querySelector('input').value;
+            
+            if (!userId) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            // Get user's GPS location from browser
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    fetch(`http://127.0.0.1:5000/update_location/${userId}/${lat}/${lon}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Fetched Data:", data);
+                        alert('Successfully sent')
+                    })
+                    .catch(error => {
+                        console.error("Error",error);
+                        alert('Could not send the location')
+                    });
+                    
+                },
+                function(error) {
+                    alert('Could not get your location');
+                }
+            );
+        }
+    </script>
+</body>
+</html>
