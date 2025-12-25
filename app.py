@@ -17,9 +17,24 @@ def home():
 def accept_user(user_id,lat,lon):     
     # Get the value from the user and store it inside dictionary locations
     now = datetime.now()
-    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")    
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")   
+    if user_id == '':
+        return jsonify({"error": "User ID must contain a character"}), 400
+
+    try:
+        lat = float(lat)
+        lon = float(lon)
+    except ValueError:
+        return jsonify({"error": "Latitude and longitude must be valid numbers"}), 400
+    if not(lat <= 90 and lat>= -90):
+        return jsonify({"error": "Latitude must be in range of -90,90"}), 400
+    if not(lon <= 180 and lon >= -180):
+        return jsonify({"error": "Longitude must be in range of -180,180"}), 400
+                
+    
     insert_location(user_id,lat,lon,timestamp)
     return jsonify({"message":"Successfully accepted the user"})
+    
 
 
 
