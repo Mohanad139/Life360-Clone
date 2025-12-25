@@ -1,5 +1,8 @@
 from flask import Flask, jsonify
 from datetime import datetime
+from database import init_db, insert_location, gets_location,get_all_locations
+
+init_db() # Initilize the database when the app start
 
 
 app = Flask(__name__)
@@ -8,31 +11,42 @@ app = Flask(__name__)
 def home():
     return "Life360 Clone"
 
-locations = {}
 
 
 @app.route('/update_location/<user_id>/<lat>/<lon>')
-def accept_user(user_id,lat,lon):     # Get the value from the user and store it inside dictionary locations
+def accept_user(user_id,lat,lon):     
+    # Get the value from the user and store it inside dictionary locations
     now = datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")    
-    locations[user_id] = {"lat":lat,"lon":lon,"Timestamp":timestamp}
+    insert_location(user_id,lat,lon,timestamp)
     return jsonify({"message":"Successfully accepted the user"})
 
 
 
 @app.route('/location/<user_id>')
-def get_location(user_id):             # Take user_id and Check if user id is valid then return location with date, if not return error.
-    if user_id in locations:
-        value = locations[user_id]
-        return jsonify({"user_id": user_id, "location": value}), 200   
+def get_location(user_id):             
+    # Take user_id and Check if user id is valid then return location with date, if not return error.
+    result = gets_location(user_id)
+    if result is not None:
+        return jsonify({"user_id": user_id, "location": result}), 200   
     else:
         return jsonify({"error":"Missing user id"})
     
 
 
 @app.route('/locations')
-def list_users():                # Once it is called it will list everything inside the dictionary locations
-    return jsonify({"Users": locations})
+def list_users():
+    # Once it is called it will list everything inside the dictionary locations
+    rows = get_all_locations()
+    users = {}
+    for row in rows:
+        users[row[0]]={
+            "Latitude" : row[1],
+            "Longitude" : row[2],
+            "Timestamp" : row[3],
+        }
+
+    return jsonify({"Users": users})
 
     
 
