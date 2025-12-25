@@ -53,3 +53,15 @@ def get_all_locations():
     rows = cursor.fetchall()
     conn.close()
     return rows
+
+def delete_location(user_id):
+    conn = sqlite3.connect("locations.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM locations
+        WHERE user_id = ?      
+            """,(user_id,))
+    
+    conn.commit()
+    conn.close()

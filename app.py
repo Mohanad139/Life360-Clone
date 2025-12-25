@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from datetime import datetime
-from database import init_db, insert_location, gets_location,get_all_locations
+from database import init_db, insert_location, gets_location,get_all_locations,delete_location
 
 init_db() # Initilize the database when the app start
 
@@ -63,7 +63,14 @@ def list_users():
 
     return jsonify({"Users": users})
 
-    
+@app.route('/location/<user_id>', methods=['DELETE'])
+def delete(user_id):
+    result = gets_location(user_id)
+    if result is None:
+        return jsonify({"error":"User does not exist"}),404
+    delete_location(user_id)
+    return jsonify({"message": f"The location of this user id {user_id} has been deleted."})    
+
 
 if __name__ == '__main__':
     app.run(debug=True)
