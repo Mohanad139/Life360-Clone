@@ -22,9 +22,9 @@ def insert_location(user_id, lat, lon):
 
     now = datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")   
-    
+
     cursor.execute("""
-        INSERT INTO locations VALUES (?,?,?,?)       
+        INSERT INTO locations (user_id,latitude,longitude,timestamp) VALUES (?,?,?,?)       
     """,(user_id,lat,lon,timestamp))
     conn.commit()
     conn.close()
@@ -38,6 +38,7 @@ def gets_location(user_id):
         SELECT *
         FROM locations
         WHERE user_id = ?
+        ORDER BY timestamp DESC LIMIT 1
                     """,(user_id,))
     
     row = cursor.fetchone()
@@ -71,21 +72,21 @@ def delete_location(user_id):
     conn.commit()
     conn.close()
 
-def update_location(user_id,lat,lon):
-    #Connect to The database
+
+
+
+def get_user_history(user_id):
     conn = sqlite3.connect("locations.db")
     cursor = conn.cursor()
-    #Get The timming
-    now = datetime.now()
-    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")   
-    #Update the table of the user
+
     cursor.execute("""
-        UPDATE locations
-        SET latitude = ?, longitude = ?, timestamp = ?
-        WHERE user_id = ?           
-    """,(lat,lon,timestamp,user_id,))
+        SELECT * 
+        FROM locations
+        WHERE user_id = ?
+        ORDER BY timestamp DESC      
+        """,(user_id,))
+    
+    row = cursor.fetchall()
 
-    conn.commit()
     conn.close()
-
-
+    return row

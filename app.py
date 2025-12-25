@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from datetime import datetime
-from database import init_db, insert_location, gets_location,get_all_locations,delete_location,update_location
+from database import init_db, insert_location, gets_location,get_all_locations,delete_location,get_user_history
 
 init_db() # Initilize the database when the app start
 
@@ -15,7 +15,7 @@ def home():
 
 @app.route('/update_location/<user_id>/<lat>/<lon>')
 def accept_user(user_id,lat,lon):     
-    # Get the value from the user and store it inside dictionary locations
+    # Get the value from the user and store it inside the database.
     if user_id == '':
         return jsonify({"error": "User ID must contain a character"}), 400
 
@@ -29,11 +29,9 @@ def accept_user(user_id,lat,lon):
     if not(lon <= 180 and lon >= -180):
         return jsonify({"error": "Longitude must be in range of -180,180"}), 400
                 
-    result = gets_location(user_id)
-    if result is not None:
-        update_location(user_id,lat,lon)
-    else:
-        insert_location(user_id,lat,lon)
+
+
+    insert_location(user_id,lat,lon)
     return jsonify({"message":"Successfully accepted the user"})
     
 
@@ -70,7 +68,26 @@ def delete(user_id):
     if result is None:
         return jsonify({"error":"User does not exist"}),404
     delete_location(user_id)
-    return jsonify({"message": f"The location of this user id {user_id} has been deleted."})    
+    return jsonify({"message": f"The location of this user id {user_id} has been deleted."})  
+
+
+@app.route('/history/<user_id>')
+def history(user_id):
+    isthere = gets_location(user_id)
+    if isthere is None:
+        return jsonify({"error":"No history found for this user."}),404
+    result = get_user_history(user_id)
+    history = []
+    for row in result:
+        history.append({
+            "ID" : row[0],
+            "Latitude" : row[2],
+            "Longitude" : row[3],
+            "Timestamp" : row[4]
+        })
+    
+    return jsonify({"User ID": user_id, "History": history })
+
 
 
 if __name__ == '__main__':
