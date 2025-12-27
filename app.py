@@ -1,15 +1,30 @@
-from flask import Flask, jsonify
-from datetime import datetime
-from database import init_db, insert_location, gets_location,get_all_locations,delete_location,get_user_history
+from flask import Flask, jsonify, request
+from datetime import datetime,timedelta
+from database import init_db, insert_location, gets_location,get_all_locations,delete_location,get_user_history,create_users_table,insert_users_table,get_user
+from flask_cors import CORS
+import bcrypt
+import jwt
+import secrets
+import base64
+
+
+
+
 
 init_db() # Initilize the database when the app start
-
+create_users_table()
 
 app = Flask(__name__)
+CORS(app)
+
+secret_key = secrets.token_hex(16)
+
 
 @app.route('/')
 def home():
     return "Life360 Clone"
+
+
 
 
 
@@ -90,5 +105,58 @@ def history(user_id):
 
 
 
+@app.route("/register",methods = ["POST"])
+def register():
+    username = request.form.get('username')
+    if username == "":
+        return jsonify({"error":"Username can't be empty"}),400
+    
+    user = get_user(username)
+    # Check if username is not None using user[1] since user[0] is id.
+    if user is not None:
+        return jsonify({"error": "Invalid username or password"}),400
+
+    password = request.form.get('password')
+    if len(password) < 8:
+        return jsonify({"error":"Password must contain 8 or more charachters"}),400
+
+    password_hash = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt(rounds=12))
+    insert_users_table(username,password_hash)
+
+    return jsonify({'message':f"User {username} has been successfully registered"})
+
+@app.route("/login",methods = ["POST"])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    user = get_user(username)
+    if user is None:
+        return jsonify({"error": "Invalid username or password"}),400
+    
+    #Get the hashed password using user[2]
+    hashed = user[2]
+
+
+    if hashed is None:
+        return jsonify({"error": "Invalid username or password"}), 400
+
+    if bcrypt.checkpw(password.encode('utf-8'),hashed):
+        payload = {
+            "sub" : username,
+            "exp" : datetime.utcnow() + timedelta(hours=24),
+            "iat" : datetime.utcnow()
+        }
+
+
+
+        final_jwt = jwt.encode(payload,secret_key,algorithm='HS256')
+
+
+        return jsonify({'token':final_jwt}),200
+    else:
+        return jsonify({"error": "Invalid username or password"}),400
+
 if __name__ == '__main__':
     app.run(debug=True)
+

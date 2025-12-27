@@ -3,16 +3,19 @@ from datetime import datetime
 
 
 def init_db():
-    conn = sqlite3.connect("locations.db")
+    conn = sqlite3.connect('locations.db')
     cursor = conn.cursor()
+
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS locations(
-            user_id TEXT PRIMARY KEY,
-            latitude REAL,
-            longitude REAL,
-            timestamp TEXT)
-                   """)
-    
+        CREATE TABLE IF NOT EXISTS locations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            latitude REAL NOT NULL,
+            longitude REAL NOT NULL,
+            timestamp TEXT NOT NULL
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -90,3 +93,49 @@ def get_user_history(user_id):
 
     conn.close()
     return row
+
+def create_users_table():
+    conn = sqlite3.connect("locations.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users
+            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            password_hash TEXT NOT NULL,
+            created_at TEXT)
+            """)
+    
+    conn.commit()
+    conn.close()
+
+def insert_users_table(username,password_hash):
+    conn = sqlite3.connect('locations.db')
+    cursor = conn.cursor()
+
+    timestamp = datetime.now().isoformat()
+
+    cursor.execute("""
+        INSERT INTO users (username,password_hash,created_at) VALUES (?,?,?)  
+        """,(username,password_hash,timestamp))
+    
+    conn.commit()
+    conn.close()
+
+def get_user(username):
+    conn = sqlite3.connect("locations.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+      SELECT *
+      FROM users
+      WHERE username = ?             
+    """,(username,))
+
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
+
+
+
