@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Life360 Clone</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Life360 Clone</h1>
@@ -10,45 +11,185 @@
     <div id="map"></div>
     
     <!-- Form will go here -->
-    <div>
-        <input type="text" placeholder="Name Ex: Mohanad ">
+     <div class="login">
+        <form>
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="text" id="login-username" placeholder="Username"
+                required>
+            </div>
+            <div class="input-box">
+                <input type="password" id="login-password" placeholder="Password"
+                required>
+            </div>
+
+
+
+            <button type="submit" class="btn" >Login</button> 
+
+            <a href="#">Forget password?</a>
+
+            <div class="Register">
+                <p>Don't have an account? <a href="#" onclick=showRegister() >Register</a></p>
+            </div>
+
+        </form>
+
+     </div>
+
+          <div class="Register-form">
+        <form>
+            <h1>Register</h1>
+            <div class="input-box">
+                <input type="text" id="register-username" placeholder="Username"
+                required>
+            </div>
+            <div class="input-box">
+                <input type="password" id="register-password"placeholder="Password"
+                required>
+            </div>
+
+            
+
+            <button type="submit" class="btn" >Register</button> 
+
+            <div class="loginurl">
+                <p>Don't have an account? <a href="#" onclick=showLogin() >Register</a></p>
+            </div>
+
+
+        </form>
+     </div>
+
+     <div>
         <button onclick="shareLocation()">Share My Location </button>
     </div>
+
+    <script>
+        // Show register form, hide login form
+        function showRegister() {
+            document.querySelector('.login').style.display = 'none';
+            document.querySelector('.Register-form').style.display = 'block';
+        }
+
+        // Show login form, hide register form
+        function showLogin() {
+            document.querySelector('.login').style.display = 'block';
+            document.querySelector('.Register-form').style.display = 'none';
+        }
+    </script>
+
+     <script>
+        document.querySelector('.Register-form form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get values from form
+            const username = document.getElementById("register-username").value;
+            const password = document.getElementById("register-password").value;
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+            
+            // Send to backend
+            const url = 'http://127.0.0.1:5000/register';
+            fetch(url, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Problem with the network");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Registration successful!');  // Show message to user
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Registration failed!');  // Show error to user
+            });
+        });
+     </script>
+
+     <script>
+        document.querySelector('.login form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+        
+        const username = document.getElementById("login-username").value;
+        const password = document.getElementById("login-password").value;
+
+        const formData = new FormData();
+        formData.append("username",username);
+        formData.append("password",password);
+
+        const url = 'http://127.0.0.1:5000/login';
+        fetch(url,{
+            method : "POST",
+            body : formData
+        })
+        .then(response =>{
+            if(!response.ok) {
+                throw new Error("Problem with the network")
+            }
+            return response.json()
+        })
+        .then(data =>{
+            console.log("Success",data)
+            localStorage.setItem("token",data.token)
+            alert("Login Successfully")
+        })
+        .catch(error =>{
+            console.error("error",error)
+            alert("Login Failed")
+        })
+        });
+
+     </script>
+
+    
     
     <!-- Users list will go here -->
     <div id="users"></div>
 
     <script>
         function shareLocation() {
-            const userId = document.querySelector('input').value;
-            
-            if (!userId) {
-                alert('Please enter your name');
-                return;
-            }
-            
-            // Get user's GPS location from browser
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    fetch(`http://127.0.0.1:5000/update_location/${userId}/${lat}/${lon}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log("Fetched Data:", data);
-                        alert('Successfully sent')
-                    })
-                    .catch(error => {
-                        console.error("Error",error);
-                        alert('Could not send the location')
-                    });
-                    
-                },
-                function(error) {
-                    alert('Could not get your location');
-                }
-            );
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            alert('Please login first');
+            return;
         }
+        
+        // Get user's GPS location from browser
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                fetch(`http://127.0.0.1:5000/update_location/${lat}/${lon}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched Data:", data);
+                    alert('Successfully sent')
+                })
+                .catch(error => {
+                    console.error("Error", error);
+                    alert('Could not send the location')
+                });
+            },
+            function(error) {
+                alert('Could not get your location');
+            }
+        );
+    }
     </script>
 </body>
 </html>

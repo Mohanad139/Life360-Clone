@@ -28,12 +28,8 @@ def home():
 
 
 
-@app.route('/update_location/<user_id>/<lat>/<lon>')
-def accept_user(user_id,lat,lon):     
-    # Get the value from the user and store it inside the database.
-    if user_id == '':
-        return jsonify({"error": "User ID must contain a character"}), 400
-
+@app.route('/update_location/<lat>/<lon>')
+def accept_user(lat,lon):     
     try:
         lat = float(lat)
         lon = float(lon)
@@ -43,11 +39,29 @@ def accept_user(user_id,lat,lon):
         return jsonify({"error": "Latitude must be in range of -90,90"}), 400
     if not(lon <= 180 and lon >= -180):
         return jsonify({"error": "Longitude must be in range of -180,180"}), 400
-                
 
 
-    insert_location(user_id,lat,lon)
-    return jsonify({"message":"Successfully accepted the user"})
+    auth = request.headers.get("Authorization")
+
+    if not auth or not auth.startswith("Bearer "):
+        return jsonify({"error": "Missing or invalid Authorization header"}), 401
+
+    token = auth.split()[1]
+
+    try:
+        payload = jwt.decode(token,secret_key,algorithms=["HS256"])
+        username = payload["sub"]
+        insert_location(username,lat,lon)
+        return jsonify({"message":"Successfully accepted the user"})
+
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 401
+
+
+
     
 
 
@@ -156,6 +170,15 @@ def login():
         return jsonify({'token':final_jwt}),200
     else:
         return jsonify({"error": "Invalid username or password"}),400
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
