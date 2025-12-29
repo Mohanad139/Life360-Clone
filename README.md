@@ -28,9 +28,13 @@ Real-time location sharing web application.
 ## 📸 Screenshots
 
 **Login Screen**
-![Login Screen](screenshots/login.png)
+<p align="center">
+  <img src="screenshots/login.png" width="800" />
+</p>
 
 **Live Location Sharing**
-![Map View](screenshots/map.png)
+<p align="center">
+  <img src="screenshots/map.png" width="800" />
+</p>
 
 
