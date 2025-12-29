@@ -79,16 +79,15 @@ def get_location(user_id):
 
 @app.route('/locations')
 def list_users():
-    # Once it is called it will list everything inside the dictionary locations
     rows = get_all_locations()
+    
     users = {}
     for row in rows:
-        users[row[0]]={
-            "Latitude" : row[1],
-            "Longitude" : row[2],
-            "Timestamp" : row[3],
+        users[row[1]] = {
+            "Latitude": row[2],
+            "Longitude": row[3],
+            "Timestamp": row[4]
         }
-
     return jsonify({"Users": users})
 
 @app.route('/location/<user_id>', methods=['DELETE'])

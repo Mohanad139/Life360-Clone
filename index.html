@@ -3,36 +3,79 @@
 <head>
     <title>Life360 Clone</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">  
+     <!-- Leaflet CSS will go here -->
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+     <!-- Leaflet  will go here -->
+     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
 </head>
 <body>
-    <h1>Life360 Clone</h1>
+    <h1></h1>
     
     <!-- Map will go here -->
-    <div id="map"></div>
+    <div id="map" style="height: 1000px; width: 100%; display: none;"></div>
     
+    <script>
+        let map;
+        function initializeMap() {
+            map = L.map('map').setView([43.4643, -80.5204], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            return map;
+        }
+
+            function loadUserLocations() {
+            fetch('http://127.0.0.1:5000/locations')
+                .then(response => response.json())
+                .then(data => {
+                    for (let username in data.Users) {
+                        let lat = data.Users[username].Latitude;
+                        let lon = data.Users[username].Longitude;
+                        console.log("Username:", username);
+                        console.log("Lat:", lat, "Lon:", lon);
+                        L.marker([lat, lon]).addTo(map).bindPopup(username);
+                    }
+
+                });
+        }
+
+    </script>
+
+    
+
+    
+
+
     <!-- Form will go here -->
      <div class="login">
         <form>
-            <h1>Login</h1>
+            <h1>Welcome!</h1>
             <div class="input-box">
                 <input type="text" id="login-username" placeholder="Username"
                 required>
+                <i class='bx  bx-user'></i> 
             </div>
             <div class="input-box">
                 <input type="password" id="login-password" placeholder="Password"
                 required>
+                <i class='bx  bx-lock'></i> 
             </div>
-
 
 
             <button type="submit" class="btn" >Login</button> 
 
-            <a href="#">Forget password?</a>
 
-            <div class="Register">
-                <p>Don't have an account? <a href="#" onclick=showRegister() >Register</a></p>
+            <div class="auth-links">
+            <a href="#" onclick=showRegister()>Sign Up</a>
+            <span class="divider">|</span>
+            <a href="/forgot-password">Forgot password?</a>
             </div>
 
+
+            
         </form>
 
      </div>
@@ -43,26 +86,30 @@
             <div class="input-box">
                 <input type="text" id="register-username" placeholder="Username"
                 required>
+                 <i class='bx  bx-user'></i> 
+
             </div>
             <div class="input-box">
                 <input type="password" id="register-password"placeholder="Password"
                 required>
+                 <i class='bx  bx-lock'></i> 
+
             </div>
 
             
 
             <button type="submit" class="btn" >Register</button> 
 
-            <div class="loginurl">
-                <p>Don't have an account? <a href="#" onclick=showLogin() >Register</a></p>
+            <div class="login-url">
+                <p>Already have an account? <a href="#" onclick=showLogin() >Login</a></p>
             </div>
 
 
         </form>
      </div>
 
-     <div>
-        <button onclick="shareLocation()">Share My Location </button>
+     <div class="Share">
+        <button id="share-location-btn" onclick="shareLocation()">Share My Location </button>
     </div>
 
     <script>
@@ -138,13 +185,17 @@
             return response.json()
         })
         .then(data =>{
-            console.log("Success",data)
-            localStorage.setItem("token",data.token)
-            alert("Login Successfully")
+            localStorage.setItem("token", data.token);
+            document.querySelector('.login').style.display = 'none';
+            document.body.style.background = 'white';  // Remove background image
+            document.getElementById("map").style.display = "block";
+            
+            initializeMap();
+            loadUserLocations();
+                    
         })
         .catch(error =>{
             console.error("error",error)
-            alert("Login Failed")
         })
         });
 

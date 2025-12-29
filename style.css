@@ -1,4 +1,240 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
 .Register-form {
     display: none;
 }
 
+#share-location-btn {
+    display: none;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display : flex;
+    justify-content: center;
+    align-items:center ;
+    margin-left: 100px;
+    min-height : 150vh;
+    background: url('small.png') no-repeat;
+}
+
+.login {
+    width: 350px;
+    background-color: #FFF6EF;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    color: white;
+    border-radius: 10px;
+    padding: 30px 40px;
+
+}
+
+
+.login h1 {
+    font-size: 36;
+    text-align: center;
+    color: black;
+}
+
+.login .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background-color: #F7ECE7;
+    border: #E3D6D0;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255,.2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: #8A7F8F;
+    padding: 20px 45px 20px 45px;
+
+}
+
+.input-box input ::placeholder {
+    color: #6E4B8B;
+}
+
+
+
+.input-box i {
+    position: absolute;
+    left :20px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size: 20px;
+    color:black;
+}
+
+
+.forget a {
+    color: white;
+    text-decoration: none;
+}
+
+.forget a:hover{
+    text-decoration: underline;
+}
+
+.login .btn {
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(
+                            90deg,
+                        #4CC6A6,
+                        #5A8BEF
+    );
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
+}
+
+.auth-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.auth-links a {
+  color: #6E4B8B;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+.auth-links .divider {
+  color: #B8A9B6;
+}
+/* ---------------- Register ---------------- */
+
+
+
+.Register-form {
+    width: 350px;
+    background-color: #FFF6EF;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    color: white;
+    border-radius: 10px;
+    padding: 30px 40px;
+
+}
+
+
+.Register-form h1 {
+    font-size: 36;
+    text-align: center;
+    color: black;
+}
+
+.Register-form .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background-color: #F7ECE7;
+    border: #E3D6D0;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255,.2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: #8A7F8F;
+    padding: 20px 45px 20px 45px;
+
+}
+
+.input-box input ::placeholder {
+    color: #6E4B8B;
+}
+
+
+
+.input-box i {
+    position: absolute;
+    left :20px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size: 20px;
+    color: #8A7F8F;
+}
+
+
+
+.Register-form .btn {
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(
+                            90deg,
+                        #4CC6A6,
+                        #5A8BEF
+    );
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
+}
+
+.login-url {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: black;
+}
+
+.login-url a {
+  color: #6E4B8B;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-url a:hover {
+  text-decoration: underline;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    height: 100vh; width: 100vw; margin: 0; padding: 0;
+}
