@@ -29,12 +29,12 @@ Real-time location sharing web application.
 
 **Login Screen**
 <p align="center">
-  <img src="screenshots/login.png" width="800" />
+  <img src="Screenshots/login.png" width="800" />
 </p>
 
 **Live Location Sharing**
 <p align="center">
-  <img src="screenshots/map.png" width="800" />
+  <img src="Screenshots/map.png" width="800" />
 </p>
 
 
