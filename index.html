@@ -34,7 +34,7 @@
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
             
-            fetch('http://127.0.0.1:5000/locations')
+            fetch('https://life360-backend.onrender.com/locations')
                 .then(response => response.json())
                 .then(data => {
                     const bounds = [];
@@ -155,7 +155,7 @@
             formData.append('password', password);
             
             // Send to backend
-            const url = 'http://127.0.0.1:5000/register';
+            const url = 'https://life360-backend.onrender.com/register';
             fetch(url, {
                 method: "POST",
                 body: formData
@@ -188,7 +188,7 @@
         formData.append("username",username);
         formData.append("password",password);
 
-        const url = 'http://127.0.0.1:5000/login';
+        const url = 'https://life360-backend.onrender.com/login';
         fetch(url,{
             method : "POST",
             body : formData
@@ -240,7 +240,7 @@
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 
-                fetch(`http://127.0.0.1:5000/update_location/${lat}/${lon}`, {
+                fetch(`https://life360-backend.onrender.com/update_location/${lat}/${lon}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
