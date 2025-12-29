@@ -27,20 +27,35 @@
             return map;
         }
 
-            function loadUserLocations() {
+        let markers = [];  // Global array to store markers
+
+        function loadUserLocations() {
+            // Clear old markers
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            
             fetch('http://127.0.0.1:5000/locations')
                 .then(response => response.json())
                 .then(data => {
+                    const bounds = [];
+                        
                     for (let username in data.Users) {
                         let lat = data.Users[username].Latitude;
                         let lon = data.Users[username].Longitude;
-                        console.log("Username:", username);
-                        console.log("Lat:", lat, "Lon:", lon);
-                        L.marker([lat, lon]).addTo(map).bindPopup(username);
+                        
+                        const marker = L.marker([lat, lon]).addTo(map)
+                        .bindPopup(username);
+                        
+                        markers.push(marker);  // Save marker
+                        bounds.push([lat, lon]);}
+                    
+                    if (bounds.length > 0) {
+                        map.fitBounds(L.latLngBounds(bounds), { padding: [50, 50] });
                     }
-
                 });
         }
+        
+
 
     </script>
 
@@ -192,6 +207,10 @@
             
             initializeMap();
             loadUserLocations();
+            setInterval(function() {
+
+                loadUserLocations();
+            }, 30000);  // 30000 milliseconds = 30 seconds
                     
         })
         .catch(error =>{
