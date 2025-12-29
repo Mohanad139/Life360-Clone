@@ -211,6 +211,10 @@
 
                 loadUserLocations();
             }, 30000);  // 30000 milliseconds = 30 seconds
+
+            setInterval(function() {
+                shareLocation();
+            }, 60000);
                     
         })
         .catch(error =>{
